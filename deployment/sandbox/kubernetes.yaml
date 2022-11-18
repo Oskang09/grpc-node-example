@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: sandbox
+  name: user-service
+  labels:
+    app: user-service
+spec:
+  selector:
+    app: user-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: sandbox
+  name: user-service
+  labels:
+    app: user-service
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      imagePullSecrets:
+        - name: github-gcr
+      containers:
+        - name: user-service
+          image: ghcr.io/amantiq/user-service/sandbox
+          imagePullPolicy: 'Always'
+          ports:
+            - containerPort: 8080

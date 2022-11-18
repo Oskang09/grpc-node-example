@@ -1,0 +1,21 @@
+name: Sandbox Deployment
+on:
+  push:
+    branches:
+    - sandbox
+
+jobs:
+  docker-image:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+    - name: Push to Github Packages
+      uses: docker/build-push-action@v1
+      with:
+        file: ./deployment/sandbox/Dockerfile
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: docker.pkg.github.com
+        repository: amantiq/user-service/sandbox
+        tag_with_ref: true
